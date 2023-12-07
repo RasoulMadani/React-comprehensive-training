@@ -17,16 +17,16 @@ const list = [
     points: 5,
   },
 ];
-function App() {
+const App = () => {
   return (
     <div>
       <h1>Hello React{title}</h1>
-      <Search/>
+      <Search />
       <List />
     </div>
   );
-}
-function List() {
+};
+const List = () => {
   return (
     <ul>
       {list.map(function (item, index) {
@@ -43,13 +43,13 @@ function List() {
       })}
     </ul>
   );
-}
-function Search() {
+};
+const Search = () => {
   return (
     <div>
       <label htmlFor="search">Search</label>
       <input type="text" id="search" />
     </div>
   );
-}
+};
 export default App;
