@@ -1,0 +1,7 @@
+ pnpm create vite@latest
+ ✔ Project name: … react-stories
+✔ Select a framework: › React
+✔ Select a variant: › JavaScript
+  cd react-stories
+  pnpm install
+  pnpm run dev
