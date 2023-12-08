@@ -28,13 +28,26 @@ const App = () => {
     },
   ];
 
-  const [stories, setStories] = useState(initialStories);
+  const [stories, setStories] = useState([]);
   const [searchTerm, setSearchTerm] = useStorageState("search", "");
 
+  const getAsyncStories = () =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ data: { stories: initialStories } });
+      }, 2000);
+    });
+
+    useEffect(() => {
+      getAsyncStories().then(result => {
+        setStories(result.data.stories);
+      });
+    }, []);
+
   const handleRemoveStory = (id) => {
-    const newStories = stories.filter(story => story.id !== id);
+    const newStories = stories.filter((story) => story.id !== id);
     setStories(newStories);
-  }
+  };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -56,8 +69,8 @@ const App = () => {
         onInputChange={handleSearch}
         isFocused
       />
-      
-      <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+
+      <List list={searchedStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 };
