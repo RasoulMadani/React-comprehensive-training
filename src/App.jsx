@@ -1,15 +1,15 @@
 import List from "./components/list";
-import Search from "./components/search";
+import Search from "./components/InputWithLabel";
 import { useEffect, useState } from "react";
 import useStorageState from "./hooks/useStorageState";
+import InputWithLabel from "./components/InputWithLabel";
 const welcome = {
   greeting: "Hi",
   title: "React",
 };
 
 const App = () => {
-  console.log("app");
-  const stories = [
+  const initialStories = [
     {
       id: 0,
       title: "React",
@@ -28,13 +28,17 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useStorageState('search', '');
+  const [stories, setStories] = useState(initialStories);
+  const [searchTerm, setSearchTerm] = useStorageState("search", "");
+
+  const handleRemoveStory = (id) => {
+    const newStories = stories.filter(story => story.id !== id);
+    setStories(newStories);
+  }
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-   
   };
-
 
   const searchedStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,8 +49,15 @@ const App = () => {
       <h1>
         {welcome.greeting} {welcome.title}
       </h1>
-      <Search search={searchTerm} onSearch={handleSearch} />
-      <List list={searchedStories} />
+      <InputWithLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+        isFocused
+      />
+      
+      <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
     </div>
   );
 };
