@@ -40,26 +40,9 @@ const storiesReducer = (state, action) => {
   }
 };
 
-const App = () => {
-  const initialStories = [
-    {
-      id: 0,
-      title: "React",
-      url: "https://reactjs.org",
-      author: "Reza ahmadi",
-      num_comments: 3,
-      points: 4,
-    },
-    {
-      id: 1,
-      title: "Redux",
-      url: "https://redux.js.org",
-      author: "Mohammad kia",
-      num_comments: 2,
-      points: 5,
-    },
-  ];
+const API_ENDPOINT = "https://react-mini-projects-api.classbon.com/Story/list";
 
+const App = () => {
   const [stories, dispatchStories] = useReducer(storiesReducer, {
     data: [],
     isLoading: false,
@@ -67,25 +50,22 @@ const App = () => {
   });
   const [searchTerm, setSearchTerm] = useStorageState("search", "");
 
-  const getAsyncStories = () =>
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({ data: { stories: initialStories } });
-        // reject();
-      }, 2000);
-    });
-
   useEffect(() => {
+
+    if (!searchTerm) return;
+
     dispatchStories({ type: "STORIES_FETCH_INIT" });
-    getAsyncStories()
-      .then((result) => {
+
+    fetch(`${API_ENDPOINT}?query=${searchTerm}`)
+      .then((response) => response.json())
+      .then((stories) => {
         dispatchStories({
           type: "STORIES_FETCH_SUCCESS",
-          payload: result.data.stories,
+          payload: stories,
         });
       })
-      .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}));
-  }, []);
+      .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
+  }, [searchTerm]);
 
   const handleRemoveStory = (id) => {
     dispatchStories({ type: "REMOVE_STORY", payload: id });
@@ -94,10 +74,6 @@ const App = () => {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const searchedStories = stories.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div>
@@ -117,7 +93,7 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={searchedStories} onRemoveItem={handleRemoveStory} />
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
       )}
     </div>
   );
